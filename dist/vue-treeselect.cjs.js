@@ -2659,22 +2659,33 @@ Arrow_component.options.__file = "src/components/icons/Arrow.vue"
         "class": "vue-treeselect__x"
       })]);
     },
-    renderArrow: function renderArrow() {
+    getArrow: function getArrow() {
       var h = this.$createElement;
       var instance = this.instance;
+      var arrowIconRenderer = instance.$scopedSlots['arrow-icon'];
       var arrowClass = {
         'vue-treeselect__control-arrow': true,
-        'vue-treeselect__control-arrow--rotated': instance.menu.isOpen
+        'vue-treeselect__control-arrow--rotated': instance.menu.isOpen,
+        'vue-treeselect__control-arrow--custom': arrowIconRenderer
       };
+      if (arrowIconRenderer) {
+        return h("div", {
+          "class": arrowClass
+        }, [" ", arrowIconRenderer()]);
+      }
+      return h(Arrow, {
+        "class": arrowClass
+      });
+    },
+    renderArrow: function renderArrow() {
+      var h = this.$createElement;
       if (!this.shouldShowArrow) return null;
       return h("div", {
         "class": "vue-treeselect__control-arrow-container",
         on: {
           "mousedown": this.handleMouseDownOnArrow
         }
-      }, [h(Arrow, {
-        "class": arrowClass
-      })]);
+      }, [this.getArrow()]);
     },
     handleMouseDownOnX: onLeftClick(function handleMouseDownOnX(evt) {
       evt.stopPropagation();
@@ -2857,6 +2868,24 @@ var Option = {
         "class": "vue-treeselect__list"
       }, [this.renderSubOptions(), this.renderNoChildrenTip(), this.renderLoadingChildrenTip(), this.renderLoadingChildrenErrorTip()]);
     },
+    getArrow: function getArrow() {
+      var h = this.$createElement;
+      var instance = this.instance;
+      var arrowIconRenderer = instance.$scopedSlots['arrow-icon'];
+      var arrowClass = {
+        'vue-treeselect__option-arrow': true,
+        'vue-treeselect__option-arrow--rotated': this.shouldExpand,
+        'vue-treeselect__option-arrow--custom': arrowIconRenderer
+      };
+      if (arrowIconRenderer) {
+        return h("div", {
+          "class": arrowClass
+        }, [" ", arrowIconRenderer()]);
+      }
+      return h(Arrow, {
+        "class": arrowClass
+      });
+    },
     renderArrow: function renderArrow() {
       var h = this.$createElement;
       var instance = this.instance,
@@ -2869,18 +2898,12 @@ var Option = {
             appear: true
           }
         };
-        var arrowClass = {
-          'vue-treeselect__option-arrow': true,
-          'vue-treeselect__option-arrow--rotated': this.shouldExpand
-        };
         return h("div", {
           "class": "vue-treeselect__option-arrow-container",
           on: {
             "mousedown": this.handleMouseDownOnArrow
           }
-        }, [h("transition", transitionProps, [h(Arrow, {
-          "class": arrowClass
-        })])]);
+        }, [h("transition", transitionProps, [this.getArrow()])]);
       }
       if (instance.hasBranchNodes) {
         if (!arrowPlaceholder) arrowPlaceholder = h("div", {
@@ -2915,7 +2938,6 @@ var Option = {
         node = this.node;
       var checkedState = instance.forest.checkedStateMap[node.id];
       var checkboxClass = {
-        'uk-checkbox': true,
         'vue-treeselect__checkbox': true,
         'vue-treeselect__checkbox--checked': checkedState === CHECKED,
         'vue-treeselect__checkbox--indeterminate': checkedState === INDETERMINATE,
