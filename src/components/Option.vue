@@ -134,6 +134,7 @@
         const { instance, node } = this
         const checkedState = instance.forest.checkedStateMap[node.id]
         const checkboxClass = {
+          'uk-checkbox': true,
           'vue-treeselect__checkbox': true,
           'vue-treeselect__checkbox--checked': checkedState === CHECKED,
           'vue-treeselect__checkbox--indeterminate': checkedState === INDETERMINATE,
